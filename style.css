@@ -1,0 +1,17 @@
+.country-map {
+    width: 150px;
+    height: auto;
+    margin: 10px;
+    filter: drop-shadow(10px 10px);
+    transition: filter 0.3s ease, transform 0.3s ease;
+    cursor: pointer; /* Esto cambiará el cursor a una mano */
+    user-select: none;
+}
+.latin-america-map{
+    user-select: none;
+}
+
+.country-map:hover {
+    filter: drop-shadow(11px 11px);
+        transform: scale(1.1); /* Aumenta el tamaño ligeramente al hacer hover */
+}
