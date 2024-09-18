@@ -29,6 +29,24 @@ let deck = [
   '2♣', '3♣', '4♣', '5♣', '6♣', '7♣', '8♣', '9♣', '10♣', 'J♣', 'Q♣', 'K♣', 'A♣',
   '2♠', '3♠', '4♠', '5♠', '6♠', '7♠', '8♠', '9♠', '10♠', 'J♠', 'Q♠', 'K♠', 'A♠'
 ];
+if (deck.length < 1) {
+  const potCards = document.getElementsByClassName("cards-pot");
+  if (potCards.length > 0) {
+    potCards[0].style.display = "none"; // Acceder al primer elemento de la colección
+  }
+}
+function removeCard() {
+  if (deck.length === 0) {
+    const potCards = document.getElementsByClassName("cards-pot");
+    if (potCards.length > 0) {
+      potCards[0].style.display = "none"; // Ocultar el contenedor cuando deck esté vacío
+    }
+  }
+}
+
+// Simulación de quitar cartas hasta vaciar el deck
+
+
 
 function shuffleDeck() {
   deck = deck.sort(() => Math.random() - 0.5); 
@@ -62,24 +80,66 @@ function resetDeck() {
 
 
 function displayCards() {
-  document.getElementById('user-cards').innerHTML = player.cards.map(card => {
-      return `<div class="card">${card}</div>`;
+  // Mostrar las cartas del jugador (User)
+  const userCards = document.getElementById('user-cards');
+  userCards.innerHTML = player.cards.map(card => `<div class="card">${card}</div>`).join(' ');
+
+  // Mostrar las cartas de la comunidad (sin animación personalizada)
+  const community = document.getElementById('community-cards');
+  community.innerHTML = communityCards.map(card => `<div class="card">${card}</div>`).join(' ');
+
+  // Mostrar las cartas del bot 1 con IDs únicos
+  const bot1Cards = document.getElementById('bot1-cards');
+  bot1Cards.innerHTML = bot1.cards.map((card, index) => {
+    return `<div class="card" id="bot1-card${index + 1}">${card}</div>`;
   }).join(' ');
 
-  document.getElementById('community-cards').innerHTML = communityCards.map(card => {
-      return `<div class="card">${card}</div>`;
+  // Mostrar las cartas del bot 2 con IDs únicos
+  const bot2Cards = document.getElementById('bot2-cards');
+  bot2Cards.innerHTML = bot2.cards.map((card, index) => {
+    return `<div class="card" id="bot2-card${index + 1}">${card}</div>`;
   }).join(' ');
 
-  document.getElementById('bot1-cards').innerHTML = bot1.cards.map(card => {
-      return `<div class="card" id="card-bot">${card}</div>`;
+  // Mostrar las cartas del bot 3 con IDs únicos
+  const bot3Cards = document.getElementById('bot3-cards');
+  bot3Cards.innerHTML = bot3.cards.map((card, index) => {
+    return `<div class="card" id="bot3-card${index + 1}">${card}</div>`;
   }).join(' ');
-  document.getElementById('bot2-cards').innerHTML = bot2.cards.map(card => {
-      return `<div class="card" id="card-bot">${card}</div>`;
-  }).join(' ');
-  document.getElementById('bot3-cards').innerHTML = bot3.cards.map(card => {
-      return `<div class="card" id="card-bot">${card}</div>`;
-  }).join(' ');
+
+  // Activar la animación de las cartas del jugador y los bots
+  setTimeout(() => {
+    // Cartas del jugador
+    document.querySelectorAll('#user-cards .card').forEach((card, index) => {
+      setTimeout(() => {
+        card.classList.add('show'); // Añade la clase 'show' para activar la animación
+      }, index * 100);
+    });
+
+    // Cartas del Bot 1
+    document.querySelectorAll('#bot1-cards .card').forEach((card, index) => {
+      setTimeout(() => {
+        card.classList.add('show');
+      }, index * 100);
+    });
+
+    // Cartas del Bot 2
+    document.querySelectorAll('#bot2-cards .card').forEach((card, index) => {
+      setTimeout(() => {
+        card.classList.add('show');
+      }, index * 100);
+    });
+
+    // Cartas del Bot 3
+    document.querySelectorAll('#bot3-cards .card').forEach((card, index) => {
+      setTimeout(() => {
+        card.classList.add('show');
+      }, index * 100);
+    });
+  }, 100); // Breve retraso para que las cartas se hayan renderizado
 }
+
+
+
 //FINPARTE BUENA
 
 
@@ -108,6 +168,7 @@ function startGame() {
   resetBettingRound(); // Resetea el estado de las apuestas
   nextStage(); // Comienza con la primera etapa (Flop)
   hideBotCards()
+  console.log(deck.length)
 }
 
 // Función para resetear la ronda de apuestas
@@ -144,25 +205,49 @@ function nextStage() {
   }
 }
 
-// Muestra las cartas en cada etapa
+// Muestra las cartas del Flop
 function displayFlop() {
   const communityElement = document.getElementById('community-cards');
-  communityElement.innerHTML = communityCards.slice(0, 3).map(card => renderCard(card)).join('');
+  communityElement.innerHTML = communityCards.slice(0, 3).map((card, index) => renderCard(card, index)).join('');
+  
+  // Animar cada carta del Flop desde diferentes puntos
+  const cards = communityElement.querySelectorAll('.cards');
+  cards.forEach((card, index) => {
+    setTimeout(() => {
+      card.classList.add('show');
+    }, index * 500); // Cada carta aparece con un retraso de 500ms
+  });
 }
 
+// Muestra la carta del Turn
 function displayTurn() {
   const communityElement = document.getElementById('community-cards');
-  communityElement.innerHTML += renderCard(communityCards[3]);
+  communityElement.innerHTML += renderCard(communityCards[3], 3); // Asigna un índice único (3)
+
+  // Animar la carta del Turn
+  const newCard = communityElement.querySelector('.cards:last-child');
+  setTimeout(() => {
+    newCard.classList.add('show');
+  }, 100); // La carta del Turn se anima después de 100ms
 }
 
+// Muestra la carta del River
 function displayRiver() {
   const communityElement = document.getElementById('community-cards');
-  communityElement.innerHTML += renderCard(communityCards[4]);
+  communityElement.innerHTML += renderCard(communityCards[4], 4); // Asigna un índice único (4)
+
+  // Animar la carta del River
+  const newCard = communityElement.querySelector('.cards:last-child');
+  setTimeout(() => {
+    newCard.classList.add('show');
+  }, 100); // La carta del River se anima después de 100ms
 }
-function renderCard(card) {
-  // Devuelve el HTML para representar una carta
-  return `<div class="card">${card}</div>`;
+// Función para generar el HTML de una carta con una clase única basada en el índice
+function renderCard(card, index) {
+  return `<div class="cards card-${index}">${card}</div>`;
 }
+
+
 
 // Lógica para manejar la ronda de apuestas
 function handleBettingRound() {
@@ -262,6 +347,7 @@ function check() {
   console.log('Player checked');
   player.hasBet = true; // Marca que el jugador ya apostó
   nextTurn();
+  removeCard()
 }
 
 function call() {
@@ -274,6 +360,7 @@ function call() {
   } else {
     console.log('Not enough chips to call');
   }
+  removeCard()
 }
 
 function raise() {
@@ -288,6 +375,7 @@ function raise() {
   } else {
     console.log('Not enough chips to raise');
   }
+  removeCard()
 }
 
 function fold() {
@@ -295,6 +383,7 @@ function fold() {
   player.isFolded = true; // Marca que el jugador se ha retirado
   players.splice(players.indexOf(player), 1); // Elimina al jugador de la partida
   nextTurn();
+  removeCard()
 }
 
 //FIN PARTE MEJORABLE
@@ -323,20 +412,29 @@ function botActions(amount = 0) {
 }
 
 function revealBotCards() {
-  document.getElementById('bot1-cards').innerHTML = bot1.cards.map(card => {
-      return `<div class="card">${card}</div>`;
-  }).join(' ');
-  document.getElementById('bot2-cards').innerHTML = bot2.cards.map(card => {
-      return `<div class="card">${card}</div>`;
-  }).join(' ');
-  document.getElementById('bot3-cards').innerHTML = bot3.cards.map(card => {
-      return `<div class="card">${card}</div>`;
-  }).join(' ');
+  // Actualizar las cartas solo si no han sido reveladas ya
+  if (!document.getElementById('bot1-cards').classList.contains('show')) {
+    document.getElementById('bot1-cards').innerHTML = bot1.cards.map(card => {
+      return `<div class="cards">${card}</div>`;
+    }).join(' ');
 
-  document.getElementById('bot1-cards').classList.remove('hidden');
-  document.getElementById('bot2-cards').classList.remove('hidden');
-  document.getElementById('bot3-cards').classList.remove('hidden');
+    document.getElementById('bot2-cards').innerHTML = bot2.cards.map(card => {
+      return `<div class="cards">${card}</div>`;
+    }).join(' ');
+
+    document.getElementById('bot3-cards').innerHTML = bot3.cards.map(card => {
+      return `<div class="cards">${card}</div>`;
+    }).join(' ');
+
+    // Aplicar la animación de revelado después de un breve retraso
+    setTimeout(() => {
+      document.querySelectorAll('#bot1-cards .card').forEach(card => card.classList.add('show'));
+      document.querySelectorAll('#bot2-cards .card').forEach(card => card.classList.add('show'));
+      document.querySelectorAll('#bot3-cards .card').forEach(card => card.classList.add('show'));
+    }, 100); // Breve retraso para asegurarse de que las cartas han sido renderizadas
+  }
 }
+
 function hideBotCards() {
   document.getElementById('bot1-cards').innerHTML = bot1.cards.map(() => {
       return `<div class="card back"></div>`;
