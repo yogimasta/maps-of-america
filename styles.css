@@ -1,107 +1,295 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #2c2c2c;
-    color: white;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .poker-table {
-    width: 1100px;
-    height: 800px;
-    background-color: green;
-    border-radius: 50%;
-    margin: 50px auto;
-    position: relative;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    border-style: solid;
-    border-color: #d4af37;
-    border-width: 20px;
-  }
-  
-  .player {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  #bot1 { top: 140px; left: 200px; rotate: 140deg; }
-  #bot2 { top: 140px; right: 200px; rotate: 220deg; }
-  #bot3 { bottom: 120px; left: 200px;rotate: 30deg; }
-  #user { bottom: 120px; right: 200px;rotate: 330deg; }
-  
-  #card-bot {
-    color: white;
+  font-family: Arial, sans-serif;
+  background-color: #2c2c2c;
+  color: white;
+  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
-  
-  .chips {
-    background-color: #d4af37;
-    padding: 5px;
-    border-radius: 5px;
-  }
-  
-  .community-cards {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    gap: 10px;
-  }
-  
-  .card {
-    width: 60px;
-    height: 90px;
-    background-color: white;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: black;
-    font-size: 24px;
-    margin: 10px;
-    border-color: black;
-    border-style: solid;
-  }
-  
-  .controls {
-    position: absolute;
-    bottom: -80px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 10px;
-  }
-  
-  button {
-    background-color: #444;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #666;
-  }
-  .hand {
-    margin-bottom: 20px;
-    display: flex;
+.poker-table {
+  width: 1100px;
+  height: 800px;
+  background-color: green;
+  border-radius: 50%;
+  margin: 50px auto;
+  position: relative;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  border-style: solid;
+  border-color: #d4af37;
+  border-width: 20px;
+}
+
+.player {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#bot1 { top: 140px; left: 200px; rotate: 140deg; }
+#bot2 { top: 140px; right: 200px; rotate: 220deg; }
+#bot3 { bottom: 120px; left: 200px; rotate: 30deg; }
+#user { bottom: 120px; right: 200px; rotate: 330deg; }
+
+#card-bot {
+  color: white;
+}
+
+.chips {
+  background-color: #d4af37;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.community-cards {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 10px;
+}
+
+.cards {
+  width: 60px;
+  height: 90px;
+  background-color: gray;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: gray;
+  font-size: 24px;
+  margin: 10px;
+  border: 3px solid black;
+  transition: transform 1s ease-out, opacity 1s ease-out, background-color 1s ease-out, color 1s ease-out;
+}
+
+.cards.show {
+  background-color: white;
+  color: black;
+  transform: translateX(0) translateY(0); /* Se mueve a su posición final */
+}
+
+/* Diferentes posiciones iniciales para cada carta */
+.card-0 {
+  transform: translateX(-350px); /* Posición inicial única */
+}
+
+.card-1 {
+  transform: translateX(-457px);
+}
+
+.card-2 {
+  transform: translateX(-549px);
+}
+
+.card-3 {
+  transform: translateX(-598px);
+}
+
+.card-4 {
+  transform: translateX(-649px);
+}
+
+.cards-pot {
+  width: 60px;
+  height: 90px;
+  background-color: white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 24px;
+  margin: 10px;
+  border-color: black;
+  border-style: solid;
+}
+
+.card {
+  width: 60px;
+  height: 90px;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 24px;
+  opacity: 0; /* Inicialmente invisible */
+}
+
+.cards {
+  width: 60px;
+  height: 90px;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 24px;
+}
+
+/* Cartas del jugador (User) */
+#user-cards .card {
+  transform: translateX(-530px) translateY(-530px) rotate(-180deg); /* Posición inicial */
+  transition: transform 1s ease-out, opacity 0.1s ease-out;
+}
+
+#user-cards .card.show {
+  transform: translateY(0) rotate(0deg); /* Posición final */
+  opacity: 1;
+}
+
+/* Cartas del Bot 1 */
+#bot1-cards .card {
+  transform: translateX(300px) translateY(-100px) rotate(180deg); /* Posición inicial */
+  transition: transform 1s ease-out, opacity 0.5s ease-out;
+}
+
+#bot1-cards .card.show {
+  transform: translateX(0) rotate(0deg); /* Posición final */
+  opacity: 1;
+}
+
+/* Cartas del Bot 2 */
+#bot2-cards .card {
+  transform: translateX(440px) translateY(-620px) rotate(180deg); /* Posición inicial */
+  transition: transform 1s ease-out, opacity 0.1s ease-out;
+}
+
+#bot2-cards .card.show {
+  transform: translateY(0) rotate(0deg); /* Posición final */
+  opacity: 1;
+}
+
+/* Cartas del Bot 3 */
+#bot3-cards .card {
+  transform: translateX(-250px) translateY(-140px) rotate(-180deg); /* Posición inicial */
+  transition: transform 1s ease-out, opacity 1s ease-out;
+}
+
+#bot3-cards .card.show {
+  transform: translateX(0) rotate(0deg); /* Posición final */
+  opacity: 1;
+}
+
+.cards-pot {
+  position: relative;
+  top: 342px;
+  left: 50px;
+  background-color: gray;
+  border-radius: 5px;
+}
+
+.controls {
+  position: absolute;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  background-color: #444;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #666;
+}
+
+.hand {
+  margin-bottom: 20px;
+  display: flex;
 }
 
 .bot-hand {
-    display: flex;
+  display: flex;
 }
+
 .card.back {
   background-color: grey; /* Representa la parte trasera de la carta */
   border: 1px solid black;
   width: 50px;
   height: 70px;
+}
+
+/* Estilos para móviles */
+@media (max-width: 768px) {
+  .poker-table {
+    width: 100%;
+    border-radius: 20px;
+    margin: 20px auto;
+  }
+  .card-0 {
+    transform: translateX(-249px); /* Posición inicial única */
+  }
+  
+  .card-1 {
+    transform: translateX(-316px);
+  }
+  
+  .card-2 {
+    transform: translateX(-393px);
+  }
+  
+  .card-3 {
+    transform: translateX(-430px);
+  }
+  
+  .card-4 {
+    transform: translateX(-469px);
+  }
+  .player {
+    width: 80px;
+    height: 80px;
+  }
+
+  .cards {
+    width: 50px;
+    height: 70px;
+    font-size: 18px;
+  }
+
+  .cards-pot {
+    top: 353px;
+    left: 20px;
+    width: 50px;
+    height: 70px;
+  }
+
+  .controls {
+    bottom: -40px;
+    gap: 5px;
+  }
+
+  button {
+    padding: 8px 15px;
+    font-size: 14px;
+    position: relative;
+    bottom: 100px;
+  }
+
+  .community-cards {
+    gap: 5px;
+  }
+
+  .chips {
+    font-size: 12px;
+    padding: 3px;
+  }
 }
