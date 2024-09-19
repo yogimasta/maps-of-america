@@ -29,17 +29,20 @@ let deck = [
   '2♣', '3♣', '4♣', '5♣', '6♣', '7♣', '8♣', '9♣', '10♣', 'J♣', 'Q♣', 'K♣', 'A♣',
   '2♠', '3♠', '4♠', '5♠', '6♠', '7♠', '8♠', '9♠', '10♠', 'J♠', 'Q♠', 'K♠', 'A♠'
 ];
-if (deck.length < 1) {
-  const potCards = document.getElementsByClassName("cards-pot");
-  if (potCards.length > 0) {
-    potCards[0].style.display = "none"; // Acceder al primer elemento de la colección
-  }
-}
+
 function removeCard() {
   if (deck.length === 0) {
     const potCards = document.getElementsByClassName("cards-pot");
     if (potCards.length > 0) {
       potCards[0].style.display = "none"; // Ocultar el contenedor cuando deck esté vacío
+    }
+  }
+}
+function addCard() {
+  if (deck.length > 0) {
+    const potCards = document.getElementsByClassName("cards-pot");
+    if (potCards.length > 0) {
+      potCards[0].style.display = "flex"; // Mostrar el contenedor cuando el deck tiene cartas
     }
   }
 }
@@ -135,7 +138,7 @@ function displayCards() {
         card.classList.add('show');
       }, index * 100);
     });
-  }, 100); // Breve retraso para que las cartas se hayan renderizado
+  }, 100);
 }
 
 
@@ -151,31 +154,45 @@ let currentBet = 0;
 let currentStage = 0;
 const players = [player, bot1, bot2, bot3];
 
-// Inicializa la propiedad 'hasBet' para cada jugador al inicio del juego
+
 players.forEach(player => {
-  player.hasBet = false;  // No han apostado al iniciar
-  player.isFolded = false;  // No se han retirado
+  player.hasBet = false; 
+  player.isFolded = false;  
 });
 
 // Función para iniciar el juego
 function startGame() {
-  communityCards.length = 0; // Limpiar las cartas comunitarias
-  currentPlayerIndex = 0; // Reiniciar el índice del jugador
-  players.forEach(player => player.cards = []); // Limpiar las cartas de cada jugador
+  communityCards.length = 0; 
+  currentPlayerIndex = 0; 
+  players.forEach(player => player.cards = []); 
+  resetDeck()
   shuffleDeck();
-  dealCards(); // Reparte las manos a los jugadores
-  currentStage = 0; // Inicia con el Flop
-  resetBettingRound(); // Resetea el estado de las apuestas
-  nextStage(); // Comienza con la primera etapa (Flop)
+  dealCards(); 
+  currentStage = 0; 
+  resetBettingRound(); 
+  nextStage(); 
   hideBotCards()
+  addCard()
   console.log(deck.length)
 }
-
+function nextRound() {
+  communityCards.length = 0; 
+  currentPlayerIndex = 0; 
+  players.forEach(player => player.cards = []); 
+  shuffleDeck();
+  dealCards(); 
+  currentStage = 0; 
+  resetBettingRound(); 
+  nextStage(); 
+  hideBotCards()
+  addCard()
+  console.log(deck.length)
+}
 // Función para resetear la ronda de apuestas
 function resetBettingRound() {
-  currentBet = 0; // Reinicia la apuesta actual
+  currentBet = 0; 
   players.forEach(player => {
-    player.hasBet = false; // Ningún jugador ha apostado al iniciar la nueva ronda
+    player.hasBet = false; 
   });
 }
 
@@ -187,16 +204,16 @@ function nextStage() {
     resetBettingRound();
     handleBettingRound(); 
   } else if (currentStage === 1) {
-    // Turn: Mostrar la cuarta carta comunitaria
+    // Turn
     communityCards.push(deck.pop());
     displayTurn();
     resetBettingRound(); 
     handleBettingRound(); 
   } else if (currentStage === 2) {
-    // River: Mostrar la quinta carta comunitaria
+    // River
     communityCards.push(deck.pop());
     displayRiver();
-    resetBettingRound(); // Reinicia el estado de las apuestas para esta fase
+    resetBettingRound(); 
     handleBettingRound(); 
   } else if (currentStage === 3) {
 
@@ -268,41 +285,16 @@ function bettingRoundOver() {
 }
 
 
-// Función para jugar el turno de cada jugador
-function playTurn() {
-  const currentPlayer = players[currentPlayerIndex];
 
-  // Si el jugador es el humano, esperar acción manual
-  if (currentPlayer.name === 'user') {
-      console.log(`Es tu turno. Pot: ${pot}, Apuesta actual: ${currentBet}`);
-      // Las acciones de 'check', 'call', 'raise', y 'fold' son controladas por botones
-  } else {
-      // Simulación de lógica de bots
-      botAction(currentPlayer);
-  }
+
+function updateGameMessages(message) {
+  const messageElement = document.getElementById('game-messages');
+  messageElement.innerText = message; // Actualiza el mensaje
 }
 
 
-// Lógica del bot
-function botAction(bot) {
-  if (bot.chips >= currentBet) {
-    bot.adjustChips(-currentBet);
-    pot += currentBet;
-    bot.hasBet = true; // Marca que el bot ya apostó
-    console.log(`${bot.name} hizo call con ${currentBet} fichas. Pot total: ${pot}`);
-  } else {
-    bot.isFolded = true; // Marca que el bot se ha retirado si no tiene suficientes fichas
-    console.log(`${bot.name} se retira.`);
-  }
-  nextTurn();
-}
 
-function resetGame() {
-  communityCards.length = 0; // Limpiar las cartas comunitarias
-  currentPlayerIndex = 0; // Reiniciar el índice del jugador
-  players.forEach(player => player.cards = []); // Limpiar las cartas de cada jugador
-  startGame() // Iniciar una nueva ronda
-}
+
 
 //FIN PARTE  MEJORABLE
 
@@ -333,13 +325,46 @@ function nextTurn() {
     // Si todos han apostado, avanzamos a la siguiente etapa
     if (bettingRoundOver()) {
       currentStage++; // Avanza a la siguiente etapa (Flop, Turn, River o Final)
-      nextStage();
+      setTimeout(() => {
+        nextStage();
+      }, 1500); // Simula el pensamiento entre etapas
     } else {
-      handleBettingRound(); // Inicia otra ronda de apuestas si no ha terminado
+      setTimeout(() => {
+        handleBettingRound(); // Inicia otra ronda de apuestas si no ha terminado
+      }, 1500); // Simula el pensamiento antes de la siguiente ronda de apuestas
     }
   } else {
-    playTurn(); // Continúa con el siguiente jugador
+    setTimeout(() => {
+      playTurn(); // Continúa con el siguiente jugador después de una demora
+    }, 1500); // Simula el pensamiento antes del siguiente turno
   }
+}
+
+
+// Función para jugar el turno de cada jugador
+function playTurn() {
+  const currentPlayer = players[currentPlayerIndex];
+
+  // Si el jugador es el humano, esperar acción manual
+  if (currentPlayer.name === 'user') {
+      console.log(`Es tu turno. Pot: ${pot}, Apuesta actual: ${currentBet}`);
+      // Las acciones de 'check', 'call', 'raise', y 'fold' son controladas por botones
+  } else {
+      // Simulación de lógica de bots
+      botAction(currentPlayer);
+  }
+}
+function botAction(bot) {
+  if (bot.chips >= currentBet) {
+    bot.adjustChips(-currentBet);
+    pot += currentBet;
+    bot.hasBet = true; // Marca que el bot ya apostó
+    updateGameMessages(`${bot.name} hizo call con ${currentBet} fichas. Pot total: ${pot}`);
+  } else {
+    bot.isFolded = true; // Marca que el bot se ha retirado si no tiene suficientes fichas
+    updateGameMessages(`${bot.name} se retira.`);
+  }
+  nextTurn();
 }
 
 
@@ -364,7 +389,13 @@ function call() {
 }
 
 function raise() {
-  const raiseAmount = 20; // Monto fijo de raise
+  const raiseAmount = parseInt(prompt("¿Cuánto quieres subir?"), 10); // Solicita el monto al jugador
+
+  if (isNaN(raiseAmount) || raiseAmount <= 0) {
+    console.log("El monto ingresado no es válido");
+    return;
+  }
+
   if (player.chips >= currentBet + raiseAmount) {
     currentBet += raiseAmount;
     player.adjustChips(-currentBet);
@@ -375,8 +406,10 @@ function raise() {
   } else {
     console.log('Not enough chips to raise');
   }
-  removeCard()
+  console.log(deck.length);
+  removeCard();
 }
+
 
 function fold() {
   console.log('Player folded');
@@ -394,23 +427,9 @@ function fold() {
 
 
 
-/////PARTE BUENA
+/////INICIO PARTE BUENA
+
 // Función para evaluar el ganador
-
-
-
-function botActions(amount = 0) {
-  // Simple bot logic: call if possible, otherwise fold
-  [bot1, bot2, bot3].forEach(bot => {
-      if (bot.chips >= amount) {
-          bot.adjustChips(-amount);
-          console.log(`${bot.name} called with ${amount} chips`);
-      } else {
-          console.log(`${bot.name} folded`);
-      }
-  });
-}
-
 function revealBotCards() {
   // Actualizar las cartas solo si no han sido reveladas ya
   if (!document.getElementById('bot1-cards').classList.contains('show')) {
